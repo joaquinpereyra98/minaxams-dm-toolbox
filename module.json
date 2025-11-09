@@ -38,7 +38,7 @@
       ],
       "paths": [
         "styles",
-        "templates/"
+        "templates"
       ]
     }
   }

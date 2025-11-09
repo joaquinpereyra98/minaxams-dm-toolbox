@@ -1,0 +1,83 @@
+<div
+    class="tab scrollable{{#if tab.active}} active{{/if}}"
+    data-group="{{tab.group}}"
+    data-tab="{{tab.id}}"
+> 
+    <div class="members-columns">
+        {{#each members as |actor|}}
+        <section class="accordion card" data-actor-id="{{actor._id}}">
+            <div class="accordion-header header" data-action="toggleAccordion">
+                <span class="name-header">
+                    {{actor.name}}
+                </span>
+                <div class="current-hp" data-tooltip="Current HP">
+                    {{actor.system.attributes.hp.value}}
+                </div>
+            </div>
+            <hr></hr>
+            <div class="accordion-content">
+                {{!----------------- Split Bars -----------------}}
+                {{#if barSegments}}
+                <div class="split-bars">
+                    {{#each barSegments as |bool i|}}
+                    <a
+                        class="bar-segment {{#if bool}} active{{/if}}"
+                        data-index="{{i}}"
+                        data-actor-id="{{actor._id}}"
+                        data-action="toggleSegment"
+                    ></a>
+                    {{/each}}
+                </div>
+                {{/if}}
+                {{!----------------- HP Counter -----------------}}
+                <div class="hp-counter">
+                    <button
+                        type="button"
+                        class="icon icon-button fa-solid fa-skull"
+                        data-action="setHP"
+                        data-mode="set"
+                        data-value="0"
+                        data-tooltip="Instant Kill"
+                    ></button>
+                    <a
+                        class="icon-anchor fa-solid fa-chevron-down"
+                        data-action="setHP"
+                        data-mode="add"
+                        data-value="-1"
+                        data-tooltip="-1 HP"
+                    ></a>
+                    <input
+                        class="member-hp-input"
+                        type="text"
+                        data-dtype="Number"
+                        name="{{actor.id}}.hp"
+                    >
+                    <a
+                        class="icon-anchor fa-solid fa-chevron-up"
+                        data-action="setHP"
+                        data-mode="add"
+                        data-value="+1"
+                        data-tooltip="+1 HP"
+                    ></a>
+                    <button
+                        type="button"
+                        data-tooltip="Full Heal"
+                        data-action="setHP"
+                        data-mode="set"
+                        data-value="{{actor.system.attributes.hp.effectiveMax}}"
+                        class="icon icon-button fa-solid fa-heart"
+                    ></button>
+                </div>
+                {{!----------------- Status Effect -----------------}}
+                <div class="statuses">
+                    {{#each actor.temporaryEffects as |effect|}}
+                    <a data-tooltip="{{effect.name}}" data-uuid="{{effect.uuid}}">
+                        <img src="{{effect.img}}" alt="{{effect.name}}">
+                    </a>
+                    {{/each}}
+                </div>
+            </div>
+        </section>
+        {{/each}}
+    </div>
+</div>

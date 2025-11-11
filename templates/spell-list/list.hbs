@@ -1,0 +1,22 @@
+<section>
+    <h4>{{label}}</h4>
+    <ol class="item-list">
+        {{#each spells as |item i|}}
+        {{#dnd5e-itemContext item as |ctx|}}
+        <li class="item flexrow" data-item-id="{{item.id}}">
+            <img
+                src="{{ item.img }}"
+                class="item-image gold-icon"
+                alt="{{ item.name }}"
+            >
+            <span class="name">{{item.name}}</span>
+            <a
+                data-action="openDocument"
+                data-doc-uuid="{{item.uuid}}"
+                class="fa-solid fa-globe"
+            ></a>
+        </li>
+        {{/dnd5e-itemContext}}
+        {{/each}}
+    </ol>
+</section>

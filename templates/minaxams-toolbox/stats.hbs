@@ -1,0 +1,96 @@
+<div
+    class="tab scrollable{{#if tab.active}} active{{/if}}"
+    data-group="{{tab.group}}"
+    data-tab="{{tab.id}}"
+>
+    <div class="members-columns">
+        {{#each members as |actor|}}
+        <section class="accordion card" data-actor-id="{{actor._id}}">
+            <div class="accordion-header header" data-action="toggleAccordion">
+                <div class="flexcol flex1">
+                    <span class="name-header">
+                        {{actor.name}}
+                    </span>
+                    <span class="class-header">
+                        {{actor.labels.class}}
+                    </span>
+                </div>
+                <a
+                    class="config-anchor fa-solid fa-gear"
+                    data-tooltip="Configure Actor List"
+                    data-action="openActorListConfig"
+                ></a>
+            </div>
+            <hr></hr>
+            <div class="accordion-content">
+                <div class="stats-section flexrow">
+                    <div class="stat-line" data-tooltip="{{localize "DND5E.HitPoints"}}">
+                        <i class="fa-solid fa-heart"></i>
+                        <span class="stat-label">
+                            {{actor.system.attributes.hp.value}} / {{actor.system.attributes.hp.max}}
+                        </span>
+                    </div>
+                    <div class="stat-line" data-tooltip="{{localize "DND5E.ArmorClass"}}">
+                        <i class="fa-solid fa-shield"></i>
+                        <span class="stat-label">
+                            {{actor.system.attributes.ac.value}}
+                        </span>
+                    </div>
+                    <div class="stat-line clickable" data-tooltip="{{localize "DND5E.PassivePerception"}}">
+                        <i class="fa-solid fa-eye"></i>
+                        <span class="stat-label">
+                            {{actor.system.skills.prc.passive}}
+                        </span>
+                    </div>
+                </div>
+                {{#if actor.skills}}
+                <div class="stats-section skills-section flexcol">
+                    <span class="section-header roboto-upper">{{localize "DND5E.Skills"}}</span>
+                    <ul class="stats-list flexcol">
+                        {{#each actor.skills as |skill|}}
+                        <li class="stat-item flexrow">
+                            <img
+                                class="icon gold-icon"
+                                src="{{skill.icon}}"
+                                alt="{{skill.key}}"
+                                width="30"
+                            >
+                            <a
+                                class="name"
+                                data-action="requestRoll"
+                                data-skill-key="{{skill.key}}"
+                            >{{skill.label}}</a>
+                            <div class="bonus">{{ dnd5e-formatModifier skill.value }}</div>
+                            <div class="passive">{{skill.passive}}</div>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>
+                {{/if}}
+                {{#if actor.spells}}
+                <div class="stats-section skills-section flexcol">
+                    <span class="section-header roboto-upper">{{localize "TYPES.Item.spellPl"}}</span>
+                    <ul class="stats-list flexcol">
+                        {{#each actor.spells as |spell|}}
+                        <li class="stat-item flexrow">
+                            <span class="name">{{spell.label}}</span>
+                            <div class="bonus">{{ spell.value }}/{{spell.max}}</div>
+                            <a
+                                data-level="{{spell.level}}"
+                                class="passive fa-solid fa-book-open"
+                                data-action="openPreparedSpells"
+                                data-label="{{spell.label}}"
+                                data-type="{{spell.type}}"
+                                data-tooltip="Open Prepared Spells: {{spell.label}}"
+                            ></a>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>
+                {{/if}}
+            </div>
+        </section>
+        {{/each}}
+    </div>
+
+</div>

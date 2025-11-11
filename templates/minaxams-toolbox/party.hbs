@@ -7,27 +7,28 @@
         {{#each members as |actor|}}
         <section class="accordion card" data-actor-id="{{actor._id}}">
             <div class="accordion-header header" data-action="toggleAccordion">
-                <span class="name-header">
+                <span class="name-header flex1">
                     {{actor.name}}
                 </span>
                 <div class="current-hp" data-tooltip="Current HP">
                     {{actor.system.attributes.hp.value}}
                 </div>
             </div>
-            <hr></hr>
+            <hr>
             <div class="accordion-content">
                 {{!----------------- Split Bars -----------------}}
-                {{#if barSegments}}
+                {{#if barSegments.length}}
+                {{#each barSegments as |row|}}
                 <div class="split-bars">
-                    {{#each barSegments as |bool i|}}
+                    {{#each row as |state|}}
                     <a
-                        class="bar-segment {{#if bool}} active{{/if}}"
-                        data-index="{{i}}"
-                        data-actor-id="{{actor._id}}"
+                        class="bar-segment {{#if state.bool}} active{{/if}}"
+                        data-index="{{state.index}}"
                         data-action="toggleSegment"
                     ></a>
                     {{/each}}
                 </div>
+                {{/each}}
                 {{/if}}
                 {{!----------------- HP Counter -----------------}}
                 <div class="hp-counter">
@@ -49,8 +50,7 @@
                     <input
                         class="member-hp-input"
                         type="text"
-                        data-dtype="Number"
-                        name="{{actor.id}}.hp"
+                        id="minaxamsToolbox.{{actor-id}}.hp"
                     >
                     <a
                         class="icon-anchor fa-solid fa-chevron-up"

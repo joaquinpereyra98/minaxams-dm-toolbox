@@ -1,22 +1,26 @@
 .minaxams-dm-toolbox {
-  &.minaxams-toolbox {
-    .window-header {
-      margin-block-end: 0px;
+  .window-header {
+    margin-block-end: 0px;
+    h1 {
+      font-size: 14px;
+      inset-block-start: 0;
     }
+  }
+  &.minaxams-toolbox {
     .tab.scrollable {
       padding: 0 5px;
     }
     .members-columns {
       margin: 5px 0;
-      display: grid; 
-      grid-template-columns: 1fr; 
-      gap: 5px; 
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 5px;
     }
     .accordion {
       display: grid;
       grid-template-columns: 1fr;
       grid-template-rows: auto auto 1fr;
-      transition: grid-template-rows .35s ease;
+      transition: grid-template-rows 0.35s ease;
 
       padding: 8px;
       font-family: var(--dnd5e-font-roboto-condensed);
@@ -28,7 +32,6 @@
           rotate: -90deg;
         }
       }
-      
 
       .accordion-header {
         cursor: var(--cursor-pointer);
@@ -40,6 +43,10 @@
         align-items: center;
         gap: 10px;
 
+        > .flex1 {
+          flex: 1;
+        }
+
         &::before {
           content: "\f078";
           font-family: var(--font-awesome);
@@ -49,12 +56,23 @@
         }
 
         .name-header {
-          flex: 1;
           font-family: var(--dnd5e-font-roboto-slab);
           font-weight: bold;
           text-align: center;
           font-size: var(--font-size-16);
         }
+
+        .class-header {
+          text-align: center;
+        }
+        .config-anchor {
+          opacity: 0.2;
+          transition: all 250ms ease;
+          &:hover {
+            opacity: 1;
+          }
+        }
+
         .current-hp {
           width: 25px;
           height: 25px;
@@ -69,20 +87,72 @@
         }
       }
       .accordion-content {
-       grid-template-rows: 0fr;
+        grid-template-rows: 0fr;
+      }
+    }
+    .stats-section {
+      .stat-line {
+        text-align: center;
+        font-size: var(--font-size-15);
+        &.clickable {
+          cursor: var(--cursor-pointer);
+          transition: all 300ms;
+          &:hover {
+            text-shadow: 0 0 8px var(--color-shadow-primary);
+            transform: scale(1.1);
+          }
+        }
+      }
+      .section-header {
+        margin: 5px 0;
+        text-align: center;
+      }
+      .stats-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        .stat-item {
+          display: flex;
+          gap: 0.5rem;
+          align-items: center;
+          padding: 0.375rem;
+          border-bottom: var(--dnd5e-border-dotted);
+          .icon {
+            --gold-icon-size: 25px
+          }
+          .name { 
+            flex: 1;
+            font-family: var(--dnd5e-font-roboto-slab);
+            font-size: var(--font-size-14);
+          }
+          .bonus {
+            flex: 0 0 50px;
+            text-align: center;
+            font-size: var(--font-size-16);
+            font-weight: bold;
+            font-family: var(--dnd5e-font-roboto);
+          }
+          .passive {
+            flex: 0 0 14px;
+            text-align: center;
+            font-size: var(--font-size-11);
+          }
+          .sign { color: var(--color-text-tertiary); }
+        }
       }
     }
     .split-bars {
       margin: 5px 0;
       display: flex;
       justify-content: space-around;
-      gap: 3px;
+      gap: 5px;
+      
       .bar-segment {
-        width: 30px;
+        flex: 1;
         height: 15px;
         background: #c2c2c2;
         border-radius: 4px;
-         border: 1px solid black;
+        border: 1px solid black;
         &.active {
           background: #f39c12;
         }
@@ -127,6 +197,57 @@
         height: 27px;
         border: 2px groove var(--dnd5e-color-gold);
         border-radius: 4px;
+      }
+    }
+  }
+
+  &.actor-list-config {
+    .colums {
+      display: flex;
+      justify-content: space-between ;
+      > * {
+        flex: 0 0 auto;
+      }
+      hr.vertical {
+        width: 2px;
+        height: auto;
+        margin-inline: 5px;
+        border: none;
+        background: linear-gradient(to bottom, transparent, var(--dnd5e-color-gold), transparent);
+      }
+    }
+    .skills-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr; 
+      gap: 5px;
+      label {
+        margin-block-end: 0px;
+        flex-wrap: nowrap;
+      }
+    }
+    .skill-icon {
+      height: 20px;
+      width: 20px;
+      margin-right: 5px;
+    }
+  }
+
+  &.spell-list {
+    .item-list {
+      margin: 0;
+      padding: 0;
+      .item {
+        gap: 5px;
+        > * {
+          flex: 0 0 auto;
+        }
+        .name {
+          flex: 1;
+          font-family: var(--dnd5e-font-roboto-slab);
+          font-size: var(--font-size-16);
+          text-overflow: ellipsis;
+          text-wrap: nowrap;
+        }
       }
     }
   }

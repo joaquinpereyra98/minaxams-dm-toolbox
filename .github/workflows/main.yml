@@ -40,13 +40,13 @@ jobs:
 
       - name: Create System Archive
         run: |
-          zip --recurse-paths ./module.zip
-          module.json \
-          README.md \
-          LICENSE \
-          main.mjs \
-          styles/main.css \
-          templates/ \
+          zip --recurse-paths ./module.zip \
+            module.json \
+            README.md \
+            LICENSE \
+            main.mjs \
+            styles/main.css \
+            templates/
 
       - name: Update Release With Files
         id: create_version_release

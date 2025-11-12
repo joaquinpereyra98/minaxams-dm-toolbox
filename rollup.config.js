@@ -1,7 +1,7 @@
 export default {
-  input: "./module-template.mjs",
+  input: "./main.mjs",
   output: {
-    file: './dist/module-template.mjs',
+    file: './dist/mains.mjs',
     format: 'esm',
   },
 };

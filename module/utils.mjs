@@ -40,17 +40,46 @@ export function splitSegments(segments) {
 
 /**
  * Helper to render checkbox list
- * @param {any[]} items 
- * @param {string[]} selected 
- * @param {string} name 
+ * @param {any[]} items
+ * @param {string[]} selected
+ * @param {string} name
  */
 export function renderList(items, selected, name) {
-  const elements = items.map(({ value, label, icon }) => `
+  const elements = items.map(
+    ({ value, label, icon }) => `
   <label class="flexrow">
     ${icon ? `<img class="skill-icon flex0" src="${icon}">` : ""}
     <span>${label}</span>
-    <input class="flex0" type="checkbox" value="${value}" name="${name}" ${selected.includes(value) ? "checked" : ""}>
-  </label>`);
+    <input class="flex0" type="checkbox" value="${value}" name="${name}" ${
+      selected.includes(value) ? "checked" : ""
+    }>
+  </label>`
+  );
 
   return elements.join("");
+}
+
+/**
+ * Parses a height string written in feet and inches and converts it to meters.
+ * @param {string} str - The height string to parse.
+ * @returns {number} Height in meters.
+ * @throws {Error} If the string cannot be interpreted as a valid height.
+ */
+export function parseHeight(str) {
+  str = str
+    .trim()
+    .toLowerCase()
+    .replace(/"/g, "in")
+    .replace(/''/g, "in")
+    .replace(/′/g, "'")
+    .replace(/ft/g, "'")
+    .replace(/in/g, "");
+
+  const match = str.match(/(\d+)\s*'?\s*(\d+)?/);
+  if (!match) throw new Error("Could not parse height: " + str);
+
+  const feet = parseInt(match[1], 10);
+  const inches = match[2] ? parseInt(match[2], 10) : 0;
+  
+  return feet + (inches / 12);
 }

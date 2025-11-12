@@ -1,3 +1,104 @@
-<section>
-  
+<section
+    class="tab scrollable{{#if tab.active}} active{{/if}}"
+    data-group="{{tab.group}}"
+    data-tab="{{tab.id}}"
+>
+    <div class="actor-card card">
+        <div class="header flexrow">
+            <h3>{{localize "TYPES.Actor.character"}}</h3>
+            <button
+                type="button"
+                class="config-button unbutton"
+                data-action="selectActor"
+                data-config="initiative"
+            >
+                <i class="fas fa-bullseye"></i>
+            </button>
+        </div>
+        <div class="info">
+            <div class="name">
+                {{selectedActor.name}}
+            </div>
+            <div>
+                <span class="label">{{localize "DND5E.AbilityScoreShort"}}</span>
+                <span class="value">{{ str.value }}</span>
+            </div>
+            <div>
+                <span class="label">{{localize "DND5E.AbilityModifierShort"}}</span>
+                <span class="value">{{ dnd5e-formatModifier str.mod }}</span>
+            </div>
+            <div class="height">
+                <span class="label">{{localize "DND5E.Height"}}</span>
+                <span class="value">{{stringHeight}}</span>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="form-group">
+        <label>{{localize "EFFECT.DND5E.StatusExceedingCarryingCapacity"}}</label>
+        <div class="form-fields flex0">
+            <input
+                type="checkbox"
+                disabled
+                {{checked exceedingCarryingCapacity}}
+            >
+        </div>
+        <p class="hint">While pushing or dragging weight in excess of your carrying capacity, your speed drops to 5 feet.</p>
+    </div>
+    <hr>
+    <div>
+        <table class="jump-table card">
+            <tbody>
+                <tr>
+                    <td class="header">
+                        <span class="dotted" data-tooltip="Requires atleast 10 feet of movement">Running</span> High Jump
+                    </td>
+                    <td>{{jumpingTable.running.high}} ft</td>
+                    <td class="header" rowspan="2">Max Vertical Reach</td>
+                    <td>{{jumpingTable.limits.runningVertical}} ft</td>
+                </tr>
+                <tr>
+                    <td class="header">Standing High Jump</td>
+                    <td>{{jumpingTable.standing.high}} ft</td>
+                    <td>{{jumpingTable.limits.standingVertical}} ft</td>
+                </tr>
+                <tr>
+                    <td class="header">
+                        <span class="dotted" data-tooltip="Requires atleast 10 feet of movement">Running</span> Long Jump
+                    </td>
+                    <td>{{jumpingTable.running.long}} ft</td>
+                    <td class="header borderless" rowspan="2">Max Obstacle Height</td>
+                    <td>{{jumpingTable.limits.runningObstacle}} ft</td>
+                </tr>
+                <tr>
+                    <td class="header">Standing Long Jump</td>
+                    <td>{{jumpingTable.standing.long}} ft</td>
+                    <td>{{jumpingTable.limits.standingObstacle}} ft</td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="note-hint">
+            Movement speed spent is equal to Distance jumped
+        </p>
+    </div>
+    <hr>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Difficulty Terrain Landing</th>
+                    <th>Obstacle Jump Check</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-center">{{localize "DND5E.AbilityDex"}} ({{localize "DND5E.SkillAcr"}}) {{localize "DND5E.AbbreviationDC"}} 10</td>
+                    <td class="text-center">{{localize "DND5E.AbilityStr"}} ({{localize "DND5E.SkillAth"}}) {{localize "DND5E.AbbreviationDC"}} 10</td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="note-hint">
+            Landing DC is increased in increments of 5 based on difficultly.
+        </p>
+    </div>
 </section>

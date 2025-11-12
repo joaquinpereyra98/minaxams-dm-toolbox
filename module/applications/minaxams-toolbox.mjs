@@ -1,5 +1,5 @@
 import { TEMPLATE_PATH, MODULE_ID, FLAGS } from "../constants.mjs";
-import { renderList, splitSegments } from "../utils.mjs";
+import { renderList, splitSegments, parseHeight } from "../utils.mjs";
 import SpellList from "./spell-list.mjs";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -10,15 +10,16 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
   ApplicationV2
 ) {
-  constructor(options = {}) {
-    super(options);
-    this._party = options.party;
-  }
 
   /** @override */
   static DEFAULT_OPTIONS = {
     id: "minaxams-toolbox",
-    classes: ["minaxams-dm-toolbox", "minaxams-toolbox", "dnd5e2"],
+    classes: [
+      "minaxams-dm-toolbox",
+      "minaxams-toolbox",
+      "standard-form",
+      "dnd5e2",
+    ],
     window: {
       resizable: true,
     },
@@ -29,9 +30,10 @@ export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
       openActorListConfig: MinaxamsToolbox.#onOpenActorListConfig,
       openPreparedSpells: MinaxamsToolbox.#onOpenPreparedSpells,
       requestRoll: MinaxamsToolbox.#onRequestRoll,
+      selectActor: MinaxamsToolbox.#onSelectActor,
     },
     position: {
-      width: 420,
+      width: 450,
     },
   };
 
@@ -67,11 +69,11 @@ export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
     },
   };
 
-  /**
-   * @type {foundry.documents.Actor}
-   */
-  get party() {
-    return this._party;
+  /**@type {foundry.documents.Actor[]} */
+  get actors() {
+    return game.users
+      .filter((u) => u.active && u.character)
+      .map((u) => u.character);;
   }
 
   _spellList;
@@ -81,6 +83,9 @@ export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
     return this._spellList;
   }
 
+  /**@type {foundry.documents.Actor}  */
+  _selectedActor;
+
   /* -------------------------------------------- */
   /*  Rendering                                   */
   /* -------------------------------------------- */
@@ -88,8 +93,7 @@ export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
   /** @inheritDoc */
   async _onFirstRender(context, options) {
     await super._onFirstRender(context, options);
-    this.party.apps[this.id] = this;
-    for (const actor of this.party.system.creatures) {
+    for (const actor of this.actors) {
       actor.apps[this.id] = this;
     }
   }
@@ -124,10 +128,11 @@ export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
   /** @inheritDoc */
   _onClose(options) {
     super._onClose(options);
-    delete this.party.apps[this.id];
-    for (const actor of this.party.system.creatures) {
+    for (const actor of this.actors) {
       delete actor.apps[this.id];
     }
+
+    if (this.spellList) this.spellList.close();
   }
 
   /* -------------------------------------------- */
@@ -135,7 +140,7 @@ export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
   /** @override */
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
-    context.members = foundry.utils.deepClone(this.party.system.creatures);
+    context.members = this.actors.map(a => foundry.utils.deepClone(a));
     return context;
   }
 
@@ -151,6 +156,9 @@ export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
         break;
       case "stats":
         await this._prepareStatsPartContext(context, options);
+        break;
+      case "tools":
+        await this._prepareToolsPartContext(context, options);
         break;
     }
 
@@ -211,6 +219,62 @@ export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
     });
   }
 
+  async _prepareToolsPartContext(context, _options) {
+    const actor = this._selectedActor || null;
+    context.selectedActor = actor;
+
+    if (!actor) {
+      // default values
+      context.exceedingCarryingCapacity = false;
+      context.stringHeight = `0'0"`;
+      context.heightFeet = 0;
+      context.str = { value: 0, mod: 0 };
+      context.jumpingTable = {
+        running: { high: 0, long: 0 },
+        standing: { high: 0, long: 0 },
+        limits: {
+          runningVertical: 0,
+          standingVertical: 0,
+          runningObstacle: 0,
+          standingObstacle: 0,
+        },
+      };
+      return;
+    }
+
+    context.exceedingCarryingCapacity = actor.statuses?.has(
+      "exceedingCarryingCapacity"
+    );
+
+    const rawHeight = (actor.system?.details?.height || "").trim();
+    context.stringHeight = rawHeight || `0'0"`;
+    const heightFeet = parseHeight(context.stringHeight);
+    context.heightFeet = heightFeet;
+
+    const { value: strScore = 0, mod: strMod = 0 } =
+      actor.system?.abilities?.str || {};
+    context.str = { value: strScore, mod: strMod };
+
+    const runningHigh = Math.max(0, 3 + strMod);
+
+    context.jumpingTable = {
+      running: {
+        high: runningHigh,
+        long: strScore,
+      },
+      standing: {
+        high: runningHigh * 0.5,
+        long: strScore * 0.5,
+      },
+      limits: {
+        runningVertical: runningHigh + 1.5 * heightFeet,
+        standingVertical: runningHigh * 0.5 + 1.5 * heightFeet,
+        runningObstacle: strScore * 0.25,
+        standingObstacle: strScore * 0.5 * 0.25,
+      },
+    };
+  }
+
   /* -------------------------------------------- */
   /*  Private API                                 */
   /* -------------------------------------------- */
@@ -221,7 +285,7 @@ export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
    * @returns {foundry.documents.Actor}
    */
   #getActorById(id) {
-    return this.party.system.creatures.find((a) => a.id === id);
+    return this.actors.find((a) => a.id === id);
   }
 
   /**
@@ -446,5 +510,20 @@ export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
       whisper: [user],
     };
     await MsgCls.create(chatData);
+  }
+
+  /**
+   *
+   * @type {ApplicationClickAction}
+   * @this {MinaxamsToolbox}
+   */
+  static #onSelectActor() {
+    const token = canvas.tokens.controlled[0];
+    if (!token?.actor) {
+      return void ui.notifications.warn("Please select a token with actor");
+    }
+
+    this._selectedActor = token.actor;
+    this.render({ parts: ["tools"] });
   }
 }

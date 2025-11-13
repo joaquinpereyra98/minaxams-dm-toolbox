@@ -437,7 +437,7 @@ export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
     const spells = actor.itemTypes.spell.filter((s) => {
       const lvl = s.system.level;
       const isPrepared = s.system.prepared !== 0;
-      const isCantrip = level === 0;
+      const isCantrip = lvl === 0;
 
       const matchesLevel = type === "pact" ? lvl <= level : lvl === level;
 

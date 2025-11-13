@@ -10,7 +10,6 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
   ApplicationV2
 ) {
-
   /** @override */
   static DEFAULT_OPTIONS = {
     id: "minaxams-toolbox",
@@ -73,7 +72,7 @@ export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
   get actors() {
     return game.users
       .filter((u) => u.active && u.character)
-      .map((u) => u.character);;
+      .map((u) => u.character);
   }
 
   _spellList;
@@ -90,14 +89,6 @@ export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
   /*  Rendering                                   */
   /* -------------------------------------------- */
 
-  /** @inheritDoc */
-  async _onFirstRender(context, options) {
-    await super._onFirstRender(context, options);
-    for (const actor of this.actors) {
-      actor.apps[this.id] = this;
-    }
-  }
-
   async _onRender(context, options) {
     await super._onRender(context, options);
 
@@ -107,6 +98,10 @@ export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
       input.addEventListener("change", (event) => {
         this.#onChangeMemberHPInput.call(this, event);
       });
+    }
+
+    for (const actor of this.actors) {
+      if (!actor.apps[this.id]) actor.apps[this.id] = this;
     }
   }
 
@@ -140,7 +135,7 @@ export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
   /** @override */
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
-    context.members = this.actors.map(a => foundry.utils.deepClone(a));
+    context.members = this.actors.map((a) => foundry.utils.deepClone(a));
     return context;
   }
 
@@ -330,9 +325,11 @@ export default class MinaxamsToolbox extends HandlebarsApplicationMixin(
 
     if (!data) return null;
 
-    // Clean empty values
-    data.skills = data.skills?.filter(Boolean);
-    data.spells = data.spells?.filter(Boolean);
+    const ensureArray = (value) =>
+      (Array.isArray(value) ? value : [value]).filter(Boolean);
+
+    data.skills = ensureArray(data.skills);
+    data.spells = ensureArray(data.spells);
 
     return data;
   }

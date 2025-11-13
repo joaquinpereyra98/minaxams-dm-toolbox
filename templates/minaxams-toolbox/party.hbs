@@ -34,14 +34,14 @@
                 <div class="hp-counter">
                     <button
                         type="button"
-                        class="icon icon-button fa-solid fa-skull"
+                        class="icon icon-button red fa-solid fa-skull"
                         data-action="setHP"
                         data-mode="set"
                         data-value="0"
                         data-tooltip="Instant Kill"
                     ></button>
                     <a
-                        class="icon-anchor fa-solid fa-chevron-down"
+                        class="icon-anchor red fa-solid fa-chevron-down"
                         data-action="setHP"
                         data-mode="add"
                         data-value="-1"
@@ -53,7 +53,7 @@
                         id="minaxamsToolbox.{{actor-id}}.hp"
                     >
                     <a
-                        class="icon-anchor fa-solid fa-chevron-up"
+                        class="icon-anchor green fa-solid fa-chevron-up"
                         data-action="setHP"
                         data-mode="add"
                         data-value="+1"
@@ -65,7 +65,7 @@
                         data-action="setHP"
                         data-mode="set"
                         data-value="{{actor.system.attributes.hp.effectiveMax}}"
-                        class="icon icon-button fa-solid fa-heart"
+                        class="icon green icon-button fa-solid fa-heart"
                     ></button>
                 </div>
                 {{!----------------- Status Effect -----------------}}
